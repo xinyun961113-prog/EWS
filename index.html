@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordStack GSAT - 記憶增長版</title>
+    <title>WordStack: 學測單字全戰線 V3.0</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #e67e22; --bg: #2d5a27; --card-w: 135px; --card-h: 190px; }
+        :root { --primary: #2c3e50; --accent: #e67e22; --bg: #2d5a27; --card-w: 130px; --card-h: 180px; }
         body { font-family: 'Segoe UI', '微軟正黑體', sans-serif; background: var(--bg); margin: 0; color: #333; }
         
         nav { background: rgba(255,255,255,0.95); padding: 12px; display: flex; justify-content: center; gap: 8px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3); flex-wrap: wrap; }
@@ -21,10 +21,10 @@
 
         /* 接龍區 */
         .slot-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 30px; }
-        .slot { width: 160px; height: 210px; border: 2px dashed rgba(255,255,255,0.5); border-radius: 12px; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; font-weight: bold; padding: 5px; }
+        .slot { width: 150px; height: 200px; border: 2px dashed rgba(255,255,255,0.5); border-radius: 12px; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; font-weight: bold; padding: 5px; }
         .deck { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; min-height: 250px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 20px; }
         
-        /* 紙牌 */
+        /* 紙牌 (新增例句顯示) */
         .card { 
             width: var(--card-w); height: var(--card-h); background: white; border-radius: 10px; 
             box-shadow: 0 6px 12px rgba(0,0,0,0.3); display: flex; flex-direction: column; 
@@ -32,20 +32,19 @@
             padding: 12px 8px; box-sizing: border-box; font-weight: bold; position: relative; border: 4px solid white; 
         }
         .card .word-text { font-size: 16px; color: var(--primary); margin-top: 10px; }
-        .card .sentence-text { font-size: 11px; color: #7f8c8d; font-style: italic; font-weight: normal; line-height: 1.2; margin-bottom: 5px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+        .card .sentence-text { font-size: 11px; color: #7f8c8d; font-style: italic; font-weight: normal; line-height: 1.2; margin-bottom: 5px; }
         .card::after { content: "♠"; position: absolute; top: 5px; left: 8px; color: #333; font-size: 12px; }
 
         /* 字典 */
-        .dict-list { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .dict-item { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .dict-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
-        .ex-box { background: #f9f9f9; padding: 10px; border-left: 4px solid var(--accent); margin-top: 8px; border-radius: 4px; }
-        .ex-en { font-style: italic; color: #2c3e50; font-size: 14px; display: block; }
-        .ex-cn { color: #7f8c8d; font-size: 13px; margin-top: 4px; display: block; }
+        .dict-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+        .dict-item { background: white; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; }
+
+        /* 複習模式按鈕佈局 */
+        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
         /* 彈窗 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; }
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 340px; background: white; padding: 25px; border-radius: 20px; z-index: 1000; text-align: center; max-height: 80vh; overflow-y: auto; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 340px; background: white; padding: 25px; border-radius: 20px; z-index: 1000; text-align: center; }
 
         .btn-main { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px; }
         .opt-btn { width: 100%; padding: 15px; margin: 8px 0; border: 2px solid #eee; border-radius: 12px; cursor: pointer; background: #fff; font-size: 15px; font-weight: bold; }
@@ -56,9 +55,9 @@
 
 <nav>
     <button onclick="updateHome(); showPage('home')" id="btn-home" class="active">主頁</button>
-    <button onclick="resumeGame(); showPage('game')" id="btn-game">繼續接龍</button>
+    <button onclick="showPage('game')" id="btn-game">接龍</button>
     <button onclick="showPage('review')" id="btn-review">複習測驗</button>
-    <button onclick="renderDictionary(); showPage('dict')" id="btn-dict">深度字典(A-Z)</button>
+    <button onclick="renderDictionary(); showPage('dict')" id="btn-dict">字典(A-Z)</button>
 </nav>
 
 <div class="modal-overlay" id="overlay"></div>
@@ -67,18 +66,17 @@
         <h2 id="m-title" style="margin:0; color:#c0392b;">解析</h2>
         <button onclick="speak(currentQuizWord.w)" style="background:none; border:none; font-size:24px; cursor:pointer;">🔊</button>
     </div>
-    <hr><div id="m-body" style="text-align:left;"></div>
-    <button onclick="closeModal()" class="btn-main">關閉</button>
+    <hr><div id="m-body" style="text-align:left; line-height: 1.5;"></div>
+    <button onclick="closeModal()" class="btn-main">繼續下一題</button>
 </div>
 
 <div id="home" class="page active">
     <div class="stats-card">
-        <h2>"Consistency is the key to success."</h2>
-        <p>持續不懈是成功的關鍵。</p>
+        <h2>"Focus on the goal, not the obstacles."</h2>
+        <p>專注於目標，而非障礙。</p>
         <hr>
-        <p>上次挑戰關卡：<b id="last-lv-name">第一關</b></p>
-        <p>已背過單字：<span class="stats-number" id="stats-total">0</span></p>
-        <button class="btn-main" onclick="resumeGame(); showPage('game')">點我繼續上次關卡</button>
+        <p>累計掌握單字量</p>
+        <span class="stats-number" id="stats-total">0</span>
     </div>
 </div>
 
@@ -87,20 +85,28 @@
     <div class="slot-container" id="slot-container"></div>
     <div class="deck" id="deck"></div>
     <div id="game-end-ui" style="display:none; text-align:center; background:white; padding:20px; border-radius:15px; margin-top:20px;">
-        <h3>🎉 關卡完成！單字已儲存。</h3>
-        <button class="btn-main" onclick="nextLevel()">前進下一關</button>
+        <h3>🎉 恭喜通關！單字已加入收藏。</h3>
+        <button class="btn-main" onclick="nextLevel()">挑戰下一關</button>
     </div>
 </div>
 
 <div id="review" class="page">
     <div id="review-setup" class="stats-card">
-        <h3>測驗模式</h3>
-        <button class="opt-btn" onclick="startReview('en_cn')">英選中</button>
-        <button class="opt-btn" onclick="startReview('cn_en')">中選英</button>
-        <button class="opt-btn" onclick="startReview('spell')">拼寫挑戰</button>
+        <h3>選擇複習模式</h3>
+        <div class="quiz-grid">
+            <button class="opt-btn" onclick="startReview('en_cn')">英選中</button>
+            <button class="opt-btn" onclick="startReview('cn_en')">中選英</button>
+            <button class="opt-btn" onclick="startReview('spell')">拼字練習</button>
+            <button class="opt-btn" onclick="startReview('trans_en_cn')">英翻中 (句子)</button>
+            <button class="opt-btn" onclick="startReview('trans_cn_en')">中翻英 (句子)</button>
+        </div>
     </div>
     <div id="quiz-container" class="stats-card" style="display:none;"></div>
-    <div id="review-results" style="display:none; margin-top:20px;"><div id="report-list"></div></div>
+    <div id="review-results" style="display:none; margin-top:20px;">
+        <h3 style="color:white; text-align:center;">測驗結果</h3>
+        <div id="report-list"></div>
+        <button class="btn-main" style="width:100%" onclick="showPage('review')">重新選擇模式</button>
+    </div>
 </div>
 
 <div id="dict" class="page">
@@ -108,78 +114,58 @@
 </div>
 
 <script>
-// --- 數據結構升級：增加雙例句與翻譯 ---
+// --- 核心數據 (Level 1-10) ---
 const levels = [
-    { title: "Level 1: 個人成長", slots: [{id:'traits', n:'特質'}, {id:'skills', n:'能力'}, {id:'social', n:'社交'}], words: [
-        {w:'Optimistic', d:'樂觀的', t:'Adj.', c:'traits', 
-         s:'She remains optimistic despite the failure.',
-         s2:'The CEO is optimistic about next year’s profits.', 
-         s_cn:'儘管失敗了，她依然保持樂觀。', s2_cn:'執行長對明年的獲利感到樂觀。'},
-        {w:'Conscientious', d:'認真負責的', t:'Adj.', c:'traits', 
-         s:'A conscientious student prepares well.',
-         s2:'He is very conscientious about his work.', 
-         s_cn:'認真負責的學生會做好準備。', s2_cn:'他對自己的工作非常盡責。'},
-        {w:'Analytical', d:'分析的', t:'Adj.', c:'skills', 
-         s:'He has a sharp, analytical mind.',
-         s2:'The report provides an analytical look at the market.', 
-         s_cn:'他擁有敏銳且具分析力的頭腦。', s2_cn:'這份報告對市場提供了分析性的見解。'},
-        {w:'Acquire', d:'習得', t:'V.', c:'skills', 
-         s:'It takes time to acquire a new language.',
-         s2:'The company plans to acquire new technology.', 
-         s_cn:'習得一門新語言需要時間。', s2_cn:'該公司計劃收購/取得新技術。'},
-        {w:'Collaboration', d:'合作', t:'N.', c:'social', 
-         s:'The project was a successful collaboration.',
-         s2:'Strong collaboration is the key to this project.', 
-         s_cn:'這個計畫是一次成功的合作。', s2_cn:'強大的協作是這個計畫的關鍵。'},
-        {w:'Interpersonal', d:'人際的', t:'Adj.', c:'social', 
-         s:'Interpersonal skills are vital in sales.',
-         s2:'He is working on his interpersonal relationships.', 
-         s_cn:'人際關係技巧在銷售中至關重要。', s2_cn:'他正在努力改善他的人際關係。'},
-        {w:'Perspective', d:'觀點', t:'N.', c:'traits', 
-         s:'Traveling gives you a new perspective.',
-         s2:'From a global perspective, the issue is complex.', 
-         s_cn:'旅行能給你新的觀點。', s2_cn:'從全球觀點來看，這個問題很複雜。'},
-        {w:'Incentive', d:'誘因', t:'N.', c:'skills', 
-         s:'The bonus provided an incentive to work harder.',
-         s2:'There is little incentive for people to save water.', 
-         s_cn:'獎金提供了努力工作的動力。', s2_cn:'人們沒什麼省水的誘因。'},
-        {w:'Mutual', d:'相互的', t:'Adj.', c:'social', 
-         s:'The agreement was based on mutual trust.',
-         s2:'They have a mutual friend in London.', 
-         s_cn:'這項協議是基於相互信任。', s2_cn:'他們在倫敦有一位共同的朋友。'},
-        {w:'Fulfill', d:'實現', t:'V.', c:'skills', 
-         s:'He finally fulfilled his lifelong dream.',
-         s2:'You must fulfill your promises to your clients.', 
-         s_cn:'他終於實現了畢生的夢想。', s2_cn:'你必須履行對客戶的承諾。'}
-    ]}
-    // (其餘 Level 2-10 數據結構請依此類推... 此處節錄 Level 1 示範)
+    { title: "Level 1: 個人成長", slots: [{id:'traits', n:'特質'}, {id:'skills', n:'能力'}, {id:'social', n:'社交'}], words: [{w:'Optimistic', d:'樂觀的', t:'Adj.', c:'traits', s:'She remains optimistic despite the failure.'}, {w:'Conscientious', d:'認真負責的', t:'Adj.', c:'traits', s:'A conscientious student prepares well for exams.'}, {w:'Analytical', d:'分析的', t:'Adj.', c:'skills', s:'He has a sharp, analytical mind for math.'}, {w:'Acquire', d:'習得', t:'V.', c:'skills', s:'It takes time to acquire a new language.'}, {w:'Collaboration', d:'合作', t:'N.', c:'social', s:'The project was a successful collaboration.'}, {w:'Interpersonal', d:'人際的', t:'Adj.', c:'social', s:'Interpersonal skills are vital in sales.'}, {w:'Perspective', d:'觀點', t:'N.', c:'traits', s:'Traveling gives you a new perspective.'}, {w:'Incentive', d:'誘因', t:'N.', c:'skills', s:'The bonus provided an incentive to work harder.'}, {w:'Mutual', d:'相互的', t:'Adj.', c:'social', s:'The agreement was based on mutual trust.'}, {w:'Fulfill', d:'實現', t:'V.', c:'skills', s:'He finally fulfilled his lifelong dream.'}] },
+    { title: "Level 2: 校園研究", slots: [{id:'edu', n:'資源'}, {id:'res', n:'過程'}, {id:'dis', n:'規範'}], words: [{w:'Curriculum', d:'課程', t:'N.', c:'edu', s:'The school is updating its curriculum.'}, {w:'Infrastructure', d:'基礎建設', t:'N.', c:'edu', s:'Digital infrastructure is essential today.'}, {w:'Hypothesis', d:'假設', t:'N.', c:'res', s:'The experiment tested the hypothesis.'}, {w:'Empirical', d:'經驗的', t:'Adj.', c:'res', s:'The theory is based on empirical data.'}, {w:'Plagiarism', d:'抄襲', t:'N.', c:'dis', s:'Plagiarism is a serious academic offense.'}, {w:'Discipline', d:'紀律', t:'N.', c:'dis', s:'Self-discipline is key to success.'}, {w:'Laboratory', d:'實驗室', t:'N.', c:'edu', s:'They work in the chemistry laboratory.'}, {w:'Analyze', d:'分析', t:'V.', c:'res', s:'Analyze the findings carefully.'}, {w:'Proficiency', d:'精通', t:'N.', c:'dis', s:'Language proficiency is required for this job.'}, {w:'Intellectual', d:'智力的', t:'Adj.', c:'dis', s:'He enjoys intellectual challenges.'}] },
+    { title: "Level 3: 城市交通", slots: [{id:'urb', n:'規劃'}, {id:'tra', n:'運輸'}, {id:'liv', n:'居住'}], words: [{w:'Skyscraper', d:'摩天大樓', t:'N.', c:'urb', s:'The city is famous for its skyscrapers.'}, {w:'Commute', d:'通勤', t:'V.', c:'tra', s:'She commutes to work by train.'}, {w:'Suburban', d:'郊區的', t:'Adj.', c:'liv', s:'They moved to a quiet suburban area.'}, {w:'Pedestrian', d:'行人', t:'N.', c:'tra', s:'The street is for pedestrians only.'}, {w:'Congestion', d:'擁塞', t:'N.', c:'tra', s:'Traffic congestion is a big problem.'}, {w:'Innovation', d:'創新', t:'N.', c:'urb', s:'Innovation drives city growth.'}, {w:'Metropolitan', d:'大都會的', t:'Adj.', c:'urb', s:'The metropolitan area is very crowded.'}, {w:'Transit', d:'運輸', t:'N.', c:'tra', s:'Public transit is efficient here.'}, {w:'Residential', d:'住宅的', t:'Adj.', c:'liv', s:'This is a quiet residential zone.'}, {w:'Amenities', d:'設施', t:'N.', c:'liv', s:'The park is a great local amenity.'}] },
+    { title: "Level 4: 環境永續", slots: [{id:'eco', n:'生態'}, {id:'cri', n:'危機'}, {id:'ene', n:'能源'}], words: [{w:'Sustainability', d:'永續', t:'N.', c:'ene', s:'Sustainability is our main goal.'}, {w:'Biodiversity', d:'生物多樣性', t:'N.', c:'eco', s:'The island has rich biodiversity.'}, {w:'Deteriorate', d:'惡化', t:'V.', c:'cri', s:'His health began to deteriorate.'}, {w:'Conservation', d:'保育', t:'N.', c:'eco', s:'Nature conservation is vital.'}, {w:'Emission', d:'排放', t:'N.', c:'cri', s:'We must reduce carbon emissions.'}, {w:'Renewable', d:'可再生的', t:'Adj.', c:'ene', s:'Wind is a renewable energy source.'}, {w:'Contaminate', d:'汙染', t:'V.', c:'cri', s:'Chemicals contaminated the water.'}, {w:'Ecosystem', d:'生態系統', t:'N.', c:'eco', s:'Pollution damages the ecosystem.'}, {w:'Deforestation', d:'森林砍伐', t:'N.', c:'cri', s:'Deforestation leads to global warming.'}, {w:'Implement', d:'執行', t:'V.', c:'ene', s:'The government implemented new laws.'}] },
+    { title: "Level 5: 媒體資訊", slots: [{id:'med', n:'媒體'}, {id:'tech', n:'科技'}, {id:'info', n:'訊息'}], words: [{w:'Journalism', d:'新聞業', t:'N.', c:'med', s:'He wants a career in journalism.'}, {w:'Encryption', d:'加密', t:'N.', c:'tech', s:'Encryption protects your messages.'}, {w:'Algorithm', d:'演算法', t:'N.', c:'tech', s:'The algorithm selects the news.'}, {w:'Censorship', d:'審查', t:'N.', c:'med', s:'They fought against press censorship.'}, {w:'Publicity', d:'宣傳', t:'N.', c:'med', s:'The campaign got a lot of publicity.'}, {w:'Manipulation', d:'操縱', t:'N.', c:'info', s:'Beware of media manipulation.'}, {w:'Cyber', d:'網路的', t:'Adj.', c:'tech', s:'Cyber security is very important.'}, {w:'Authentic', d:'真實的', t:'Adj.', c:'info', s:'Is this an authentic document?'}, {w:'Broadcasting', d:'播放', t:'N.', c:'med', s:'The news is broadcasting now.'}, {w:'Verify', d:'證實', t:'V.', c:'info', s:'Please verify your account.'}] },
+    { title: "Level 6: 社會正義", slots: [{id:'law', n:'法律'}, {id:'equ', n:'平等'}, {id:'soc', n:'現象'}], words: [{w:'Legislation', d:'立法', t:'N.', c:'law', s:'New legislation was passed today.'}, {w:'Discrimination', d:'歧視', t:'N.', c:'equ', s:'Stop discrimination in the workplace.'}, {w:'Equality', d:'平等', t:'N.', c:'equ', s:'We all fight for racial equality.'}, {w:'Vulnerable', d:'脆弱的', t:'Adj.', c:'soc', s:'The elderly are vulnerable to cold.'}, {w:'Minority', d:'少數', t:'N.', c:'equ', s:'Protect the rights of the minority.'}, {w:'Welfare', d:'福利', t:'N.', c:'soc', s:'Social welfare is for everyone.'}, {w:'Justice', d:'正義', t:'N.', c:'law', s:'They are seeking social justice.'}, {w:'Inclusion', d:'包容', t:'N.', c:'equ', s:'The school promotes social inclusion.'}, {w:'Stereotype', d:'刻板印象', t:'N.', c:'soc', s:'Break the gender stereotype.'}, {w:'Reform', d:'改革', t:'V.', c:'law', s:'The tax system needs reform.'}] },
+    { title: "Level 7: 醫療健康", slots: [{id:'dis', n:'疾病'}, {id:'pre', n:'預防'}, {id:'men', n:'身心'}], words: [{w:'Vaccination', d:'疫苗', t:'N.', c:'pre', s:'Vaccination prevents many diseases.'}, {w:'Immunity', d:'免疫', t:'N.', c:'pre', s:'Exercise helps build immunity.'}, {w:'Diagnosis', d:'診斷', t:'N.', c:'dis', s:'Early diagnosis saves lives.'}, {w:'Rehabilitation', d:'康復', t:'N.', c:'dis', s:'He is in drug rehabilitation.'}, {w:'Chronic', d:'慢性的', t:'Adj.', c:'dis', s:'He suffers from chronic pain.'}, {w:'Depression', d:'憂鬱', t:'N.', c:'men', s:'Depression is a serious illness.'}, {w:'Therapy', d:'治療', t:'N.', c:'men', s:'Art therapy can help stress.'}, {w:'Pandemic', d:'大流行', t:'N.', c:'pre', s:'The pandemic affected the world.'}, {w:'Symptoms', d:'症狀', t:'N.', c:'dis', s:'Common flu symptoms include fever.'}, {w:'Resilience', d:'韌性', t:'N.', c:'men', s:'Show resilience in difficult times.'}] },
+    { title: "Level 8: 經濟商業", slots: [{id:'mkt', n:'市場'}, {id:'fin', n:'金融'}, {id:'biz', n:'經營'}], words: [{w:'Inflation', d:'通膨', t:'N.', c:'fin', s:'Inflation lowers purchasing power.'}, {w:'Recession', d:'衰退', t:'N.', c:'fin', s:'The company failed during recession.'}, {w:'Entrepreneur', d:'創業家', t:'N.', c:'biz', s:'A young entrepreneur started this.'}, {w:'Surplus', d:'盈餘', t:'N.', c:'fin', s:'The budget had a small surplus.'}, {w:'Investment', d:'投資', t:'N.', c:'fin', s:'Education is a great investment.'}, {w:'Monopoly', d:'壟斷', t:'N.', c:'mkt', s:'They have a monopoly on salt.'}, {w:'Consumption', d:'消費', t:'N.', c:'mkt', s:'Energy consumption is too high.'}, {w:'Wholesale', d:'批發', t:'Adj.', c:'biz', s:'Buy at a wholesale price.'}, {w:'Strategy', d:'策略', t:'N.', c:'biz', s:'A long-term business strategy.'}, {w:'E-commerce', d:'電商', t:'N.', c:'mkt', s:'E-commerce is booming globally.'}] },
+    { title: "Level 9: 文化思考", slots: [{id:'art', n:'藝術'}, {id:'cul', n:'文化'}, {id:'phi', n:'哲學'}], words: [{w:'Heritage', d:'遺產', t:'N.', c:'cul', s:'This is a world heritage site.'}, {w:'Aesthetics', d:'美學', t:'N.', c:'art', s:'I love the aesthetics of the room.'}, {w:'Abstract', d:'抽象', t:'Adj.', c:'art', s:'The abstract art is hard to read.'}, {w:'Renaissance', d:'文藝復興', t:'N.', c:'cul', s:'The Renaissance was a great era.'}, {w:'Philosophy', d:'哲學', t:'N.', c:'phi', s:'He studies Greek philosophy.'}, {w:'Literature', d:'文學', t:'N.', c:'art', s:'I enjoy classic literature.'}, {w:'Preservation', d:'保存', t:'N.', c:'cul', s:'Heritage preservation is vital.'}, {w:'Sophisticated', d:'複雜的', t:'Adj.', c:'phi', s:'A sophisticated computer system.'}, {w:'Perspective', d:'觀點', t:'N.', c:'phi', s:'Consider a different perspective.'}, {w:'Exhibit', d:'展覽', t:'V.', c:'art', s:'They will exhibit new paintings.'}] },
+    { title: "Level 10: 全球未來", slots: [{id:'int', n:'國際'}, {id:'fut', n:'未來'}, {id:'hum', n:'人道'}], words: [{w:'Globalization', d:'全球化', t:'N.', c:'int', s:'Globalization changed the economy.'}, {w:'Diplomatic', d:'外交的', t:'Adj.', c:'int', s:'Solve it in a diplomatic way.'}, {w:'Refugee', d:'難民', t:'N.', c:'hum', s:'Helping refugees find homes.'}, {w:'Humanitarian', d:'人道的', t:'Adj.', c:'hum', s:'Humanitarian aid was sent.'}, {w:'Frontier', d:'尖端', t:'N.', c:'fut', s:'Space is the new frontier.'}, {w:'Biotechnology', d:'生技', t:'N.', c:'fut', s:'Biotech is the future of medicine.'}, {w:'Intervention', d:'干預', t:'N.', c:'int', s:'Government intervention is needed.'}, {w:'Ethics', d:'倫理', t:'N.', c:'fut', s:'AI ethics is a hot topic.'}, {w:'Migration', d:'遷徙', t:'N.', c:'hum', s:'The migration of wild birds.'}, {w:'Artificial', d:'人工的', t:'Adj.', c:'fut', s:'Artificial intelligence is smart.'}] }
 ];
 
-// --- 邏輯功能 ---
 let favorites = JSON.parse(localStorage.getItem('gsat_favs')) || [];
-let currentLevel = parseInt(localStorage.getItem('gsat_last_lv')) || 0;
+let currentLevel = 0;
+let reviewQueue = [];
+let reviewResults = [];
+let currentQuizWord = null;
 
-window.onload = () => { updateHome(); };
+// --- 初始化 ---
+window.onload = () => { updateHome(); initGame(0); };
+function updateHome() { document.getElementById('stats-total').innerText = favorites.length; }
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('btn-'+id).classList.add('active');
+}
+function speak(t) { const m = new SpeechSynthesisUtterance(); m.text = t; m.lang = 'en-US'; m.rate = 0.9; window.speechSynthesis.speak(m); }
 
-function updateHome() {
-    document.getElementById('stats-total').innerText = favorites.length;
-    document.getElementById('last-lv-name').innerText = levels[currentLevel]?.title || "第一關";
+// --- 字典 ---
+function renderDictionary() {
+    const list = document.getElementById('dict-list');
+    list.innerHTML = '';
+    let allWords = []; levels.forEach(lv => allWords.push(...lv.words));
+    allWords.sort((a, b) => a.w.localeCompare(b.w));
+    allWords.forEach(w => {
+        const item = document.createElement('div');
+        item.className = 'dict-item';
+        item.innerHTML = `<div><b>${w.w}</b><br><small>${w.t} ${w.d}</small></div><button onclick="event.stopPropagation(); speak('${w.w}')">🔊</button>`;
+        item.onclick = () => openModal(w, "解析");
+        list.appendChild(item);
+    });
 }
 
-function resumeGame() {
-    initGame(currentLevel);
-}
-
+// --- 接龍 ---
 function initGame(lvIdx) {
-    currentLevel = lvIdx;
-    localStorage.setItem('gsat_last_lv', lvIdx); // 儲存當前關卡
-    const lv = levels[lvIdx];
-    if(!lv) return alert("敬請期待後續關卡！");
-    
+    currentLevel = lvIdx; const lv = levels[lvIdx];
     document.getElementById('level-title').innerText = lv.title;
     document.getElementById('game-end-ui').style.display = 'none';
     document.getElementById('slot-container').innerHTML = lv.slots.map(s => `<div class="slot" id="${s.id}" ondrop="drop(event)" ondragover="allowDrop(event)">${s.n}</div>`).join('');
-    
     const deck = document.getElementById('deck'); deck.innerHTML = '';
     [...lv.words].sort(()=>Math.random()-0.5).forEach(w => {
         const d = document.createElement('div'); d.className = 'card'; d.draggable = true; d.id = w.w;
@@ -188,35 +174,6 @@ function initGame(lvIdx) {
         deck.appendChild(d);
     });
 }
-
-function renderDictionary() {
-    const list = document.getElementById('dict-list');
-    list.innerHTML = '';
-    let allWords = []; levels.forEach(lv => allWords.push(...lv.words));
-    allWords.sort((a, b) => a.w.localeCompare(b.w));
-
-    allWords.forEach(w => {
-        const item = document.createElement('div');
-        item.className = 'dict-item';
-        item.innerHTML = `
-            <div class="dict-header">
-                <div><b>${w.w}</b> <small>(${w.t})</small><br><span>${w.d}</span></div>
-                <button onclick="speak('${w.w}')" style="background:none; border:none; cursor:pointer; font-size:20px;">🔊</button>
-            </div>
-            <div class="ex-box">
-                <span class="ex-en">1. ${w.s}</span>
-                <span class="ex-cn">→ ${w.s_cn || '(翻譯載入中)'}</span>
-            </div>
-            <div class="ex-box">
-                <span class="ex-en">2. ${w.s2 || 'The word can be used in various contexts.'}</span>
-                <span class="ex-cn">→ ${w.s2_cn || '這個單字可以用在各種語境中。'}</span>
-            </div>
-        `;
-        list.appendChild(item);
-    });
-}
-
-// 拖曳與複習邏輯與先前版本相同...
 function allowDrop(e) { e.preventDefault(); }
 function drop(e) {
     e.preventDefault(); const id = e.dataTransfer.getData("text"); const word = levels[currentLevel].words.find(w => w.w === id);
@@ -227,24 +184,75 @@ function checkWin() {
     if(Array.from(document.querySelectorAll('.card')).every(c => c.style.visibility === 'hidden')) {
         document.getElementById('game-end-ui').style.display = 'block';
         levels[currentLevel].words.forEach(w => { if(!favorites.find(f => f.w === w.w)) favorites.push(w); });
-        localStorage.setItem('gsat_favs', JSON.stringify(favorites));
-        updateHome();
+        localStorage.setItem('gsat_favs', JSON.stringify(favorites)); updateHome();
     }
 }
-function nextLevel() { initGame(currentLevel + 1); }
-function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.getElementById('btn-'+id).classList.add('active');
+function nextLevel() { if(currentLevel < levels.length-1) initGame(currentLevel+1); }
+
+// --- 複習模式升級 ---
+function startReview(mode) {
+    if(favorites.length < 3) return alert("請先收藏至少 3 個單字！");
+    reviewQueue = [...favorites].sort(()=>Math.random()-0.5); reviewResults = [];
+    document.getElementById('review-setup').style.display = 'none';
+    document.getElementById('quiz-container').style.display = 'block';
+    nextQuiz(mode);
 }
-function speak(t) { const m = new SpeechSynthesisUtterance(); m.text = t; m.lang = 'en-US'; m.rate = 0.9; window.speechSynthesis.speak(m); }
-function openModal(w, title) {
+
+function nextQuiz(mode) {
+    if(reviewQueue.length === 0) {
+        document.getElementById('quiz-container').style.display='none'; document.getElementById('review-results').style.display='block';
+        document.getElementById('report-list').innerHTML = reviewResults.map(r => `<div style="background:white; margin:5px; padding:10px; border-radius:5px;"><b>${r.w}</b> ${r.d}</div>`).join('');
+        document.getElementById('review-setup').style.display = 'block'; return;
+    }
+    currentQuizWord = reviewQueue.pop();
+    const box = document.getElementById('quiz-container');
+    
+    if(mode==='en_cn') {
+        let opts = [currentQuizWord.d]; while(opts.length<3) { let r=favorites[Math.floor(Math.random()*favorites.length)].d; if(!opts.includes(r)) opts.push(r); }
+        box.innerHTML = `<h3>英選中</h3><h2>"${currentQuizWord.w}"</h2>` + opts.sort(()=>Math.random()-0.5).map(o => `<button class="opt-btn" onclick="checkAnswer('${o}','${currentQuizWord.d}','${mode}')">${o}</button>`).join('');
+        speak(currentQuizWord.w);
+    } 
+    else if(mode==='cn_en') {
+        let opts = [currentQuizWord.w]; while(opts.length<3) { let r=favorites[Math.floor(Math.random()*favorites.length)].w; if(!opts.includes(r)) opts.push(r); }
+        box.innerHTML = `<h3>中選英</h3><h2>"${currentQuizWord.d}"</h2>` + opts.sort(()=>Math.random()-0.5).map(o => `<button class="opt-btn" onclick="checkAnswer('${o}','${currentQuizWord.w}','${mode}')">${o}</button>`).join('');
+    }
+    else if(mode==='spell') {
+        box.innerHTML = `<h3>拼寫挑戰</h3><h2>"${currentQuizWord.d}"</h2><input type="text" id="spell-in" autocomplete="off"><button class="btn-main" onclick="checkAnswer(document.getElementById('spell-in').value, '${currentQuizWord.w}', '${mode}')">送出</button>`;
+    }
+    else if(mode==='trans_en_cn') {
+        box.innerHTML = `<h3>英翻中 (句子)</h3><p style="font-size:20px; line-height:1.4;">${currentQuizWord.s}</p><button class="opt-btn" style="color:red;" onclick="openModal(currentQuizWord, '正確翻譯參考', '${mode}')">點擊看正確解答</button>`;
+    }
+    else if(mode==='trans_cn_en') {
+        // 簡易挖空
+        let blanked = currentQuizWord.s.replace(new RegExp(currentQuizWord.w, "gi"), "_______");
+        box.innerHTML = `<h3>中翻英 (填空)</h3><p style="font-size:16px;">單字提示：${currentQuizWord.d}</p><p style="font-size:18px;">${blanked}</p><input type="text" id="spell-in" placeholder="請填入單字"><button class="btn-main" onclick="checkAnswer(document.getElementById('spell-in').value, '${currentQuizWord.w}', '${mode}')">送出</button>`;
+    }
+}
+
+function checkAnswer(u, c, m) {
+    const isCorrect = u.trim().toLowerCase() === c.toLowerCase();
+    reviewResults.push({...currentQuizWord, isCorrect});
+    if(!isCorrect) openModal(currentQuizWord, "再加把勁！", m); else nextQuiz(m);
+}
+
+// --- 通用彈窗 ---
+function openModal(w, title, qm = null) {
     currentQuizWord = w; document.getElementById('m-title').innerText = title;
-    document.getElementById('m-body').innerHTML = `<p><b>${w.w}</b></p><p>${w.d}</p><p><i>${w.s}</i><br>${w.s_cn || ''}</p>`;
+    document.getElementById('m-body').innerHTML = `
+        <p><b>單字：</b>${w.w}</p>
+        <p><b>詞性：</b>${w.t}</p>
+        <p><b>意思：</b>${w.d}</p>
+        <hr>
+        <p><b>例句原文：</b><br><i>${w.s}</i></p>
+    `;
     document.getElementById('overlay').style.display = 'block'; document.getElementById('modal').style.display = 'block';
+    document.getElementById('modal').dataset.qm = qm || "";
+    speak(w.w);
 }
-function closeModal() { document.getElementById('overlay').style.display = 'none'; document.getElementById('modal').style.display = 'none'; }
+function closeModal() {
+    document.getElementById('overlay').style.display = 'none'; document.getElementById('modal').style.display = 'none';
+    const qm = document.getElementById('modal').dataset.qm; if(qm) nextQuiz(qm);
+}
 </script>
 </body>
 </html>
