@@ -3,69 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordStack: Themes</title>
+    <title>WordStack: Custom Name</title>
     <style>
-        :root { 
-            --primary: #4a90e2; 
-            --bg: #f4f7f6; 
-            --accent: #f1c40f; 
-            --text: #2d3748; 
-            --danger: #e74c3c; 
-            --success: #2ecc71; 
-            --locked: #718096;
-            --card-bg: white;
-        }
+        :root { --primary: #4a90e2; --bg: #f4f7f6; --accent: #f1c40f; --text: #2d3748; --danger: #e74c3c; --success: #2ecc71; --locked: #718096; }
+        body { font-family: 'Segoe UI', '微軟正黑體', sans-serif; background: var(--bg); margin: 0; color: var(--text); touch-action: manipulation; }
         
-        /* 色彩主題類別 */
-        body.theme-white { --bg: #f4f7f6; --text: #2d3748; --card-bg: white; }
-        body.theme-black { --bg: #1a202c; --text: #f7fafc; --card-bg: #2d3748; }
-        body.theme-pink { --bg: #fff5f7; --text: #702459; --card-bg: white; }
-        body.theme-grey { --bg: #e2e8f0; --text: #2d3748; --card-bg: #f7fafc; }
-        body.theme-blue { --bg: #ebf8ff; --text: #2c5282; --card-bg: white; }
-
-        body { font-family: 'Segoe UI', '微軟正黑體', sans-serif; background: var(--bg); margin: 0; color: var(--text); transition: background 0.3s, color 0.3s; }
-        
-        /* 狀態列 */
         .status-bar { background: #2d3748; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; height: 45px; }
         .timer-container { width: 100%; background: #ddd; height: 6px; position: sticky; top: 45px; z-index: 1000; }
         .timer-bar { height: 100%; width: 100%; background: var(--success); transition: width 1s linear; }
         
-        /* 導覽列 */
-        nav { background: var(--card-bg); padding: 10px; display: flex; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 51px; z-index: 999; flex-wrap: wrap; }
-        nav button { border: 1.5px solid var(--primary); background: transparent; color: var(--primary); padding: 6px 10px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        nav { background: white; padding: 10px; display: flex; justify-content: center; gap: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 51px; z-index: 999; flex-wrap: wrap; }
+        nav button { border: 1.5px solid var(--primary); background: white; color: var(--primary); padding: 6px 10px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.2s; }
         nav button.active { background: var(--primary); color: white; }
 
         .page { display: none; padding: 20px; max-width: 600px; margin: auto; animation: fadeIn 0.3s; }
         .page.active { display: block; }
 
-        /* 卡片通用樣式 */
-        .level-card, .rank-list, .settings-item, .card, .toggle-box, .quote-box {
-            background: var(--card-bg);
-            border-radius: 15px;
-            color: var(--text);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
         .level-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .level-card { padding: 15px; text-align: center; border: 2px solid transparent; cursor: pointer; position: relative; overflow: hidden; height: 100px; display: flex; flex-direction: column; justify-content: center; }
-        .level-card.locked { opacity: 0.6; filter: grayscale(1); }
-        .chain-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .level-card { background: white; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid transparent; cursor: pointer; position: relative; overflow: hidden; height: 100px; display: flex; flex-direction: column; justify-content: center; }
+        .level-card.locked { background: #cbd5e0; cursor: not-allowed; filter: grayscale(1); opacity: 0.8; }
+        .chain-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: 24px; pointer-events: none; }
 
-        .rank-item { display: flex; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .rank-item.me { background: rgba(241, 196, 15, 0.2); font-weight: bold; }
-
-        /* 顏色按鈕 */
-        .color-picker { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px; }
-        .color-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #ddd; }
+        .rank-list { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .rank-item { display: flex; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid #eee; align-items: center; }
+        .rank-item.me { background: #fff9db; font-weight: bold; border-left: 5px solid var(--accent); }
 
         .slot-row { display: flex; gap: 8px; margin: 15px 0; min-height: 80px; }
-        .slot { flex: 1; border: 2.2px dashed var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 8px; font-weight: bold; font-size: 13px; text-align: center; }
-        .card { display: inline-block; padding: 10px 14px; margin: 4px; cursor: grab; font-weight: bold; border: 2px solid #eee; }
+        .slot { flex: 1; border: 2.2px dashed #cbd5e0; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #fff; padding: 8px; font-weight: bold; font-size: 13px; text-align: center; }
+        .card { display: inline-block; padding: 10px 14px; background: white; border-radius: 8px; margin: 4px; cursor: grab; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold; border: 2px solid #eee; }
+        .card.selected { border-color: var(--primary); background: #eef6ff; }
+
+        .settings-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; }
+        
+        input[type="text"] { padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; width: 100%; box-sizing: border-box; font-size: 16px; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body class="theme-white">
+<body>
 
 <audio id="bgm" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg"></audio>
 
@@ -83,74 +59,77 @@
     <button onclick="showPage('settings')" id="btn-settings">⚙️ 設置</button>
 </nav>
 
-<div id="settings" class="page">
-    <h3>遊戲設置</h3>
-    
-    <div class="settings-item" style="padding: 15px; margin-bottom: 10px;">
-        <label><b>🎨 更換背景顏色：</b></label>
-        <div class="color-picker">
-            <div class="color-dot" style="background: #f4f7f6;" onclick="changeTheme('white')"></div>
-            <div class="color-dot" style="background: #1a202c;" onclick="changeTheme('black')"></div>
-            <div class="color-dot" style="background: #fff5f7;" onclick="changeTheme('pink')"></div>
-            <div class="color-dot" style="background: #cbd5e0;" onclick="changeTheme('grey')"></div>
-            <div class="color-dot" style="background: #ebf8ff;" onclick="changeTheme('blue')"></div>
-        </div>
-    </div>
-
-    <div class="settings-item" style="padding: 15px; margin-bottom: 10px;">
-        <label><b>修改排名暱稱：</b></label>
-        <div style="display:flex; gap:10px; margin-top:5px;">
-            <input type="text" id="name-input" style="flex:1; padding:8px; border-radius:8px; border:1px solid #ddd;">
-            <button onclick="saveNickname()" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:8px;">儲存</button>
-        </div>
-    </div>
-
-    <div class="settings-item" style="padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between;">
-        <span>操作音效 SFX</span>
-        <button id="sfx-toggle" onclick="toggleSFX()">ON</button>
+<div id="home" class="page">
+    <h2>單字冒險王</h2>
+    <div id="quote-display" style="background:white; padding:20px; border-radius:15px; border-left:6px solid var(--primary); margin-bottom: 20px;"></div>
+    <div style="background:white; padding:20px; border-radius:15px; text-align:center;">
+        <p>歡迎回來，<b id="display-nickname" style="color:var(--primary);">冒險者</b>！</p>
+        <p>總積分：<b style="font-size:24px;" id="home-score">0</b></p>
+        <button onclick="showPage('levels')" style="background:var(--primary); color:white; border:none; padding:12px 30px; border-radius:25px; font-weight:bold; cursor:pointer;">開始挑戰 ⛓️</button>
     </div>
 </div>
 
-<div id="home" class="page">
-    <div id="quote-display" class="quote-box" style="padding: 20px; border-left: 6px solid var(--primary); margin-bottom: 20px;"></div>
-    <div class="settings-item" style="padding:20px; text-align:center;">
-        <p>歡迎，<b id="display-nickname" style="color:var(--primary);">冒險者</b></p>
-        <p>總積分：<b id="home-score" style="font-size: 24px;">0</b></p>
-        <button onclick="showPage('levels')" style="background:var(--primary); color:white; border:none; padding:10px 25px; border-radius:20px;">開始挑戰 ⛓️</button>
+<div id="settings" class="page">
+    <h3>遊戲設置</h3>
+    <div class="settings-item">
+        <label><b>修改排名暱稱：</b></label>
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="name-input" placeholder="輸入你的暱稱..." maxlength="10">
+            <button onclick="saveNickname()" style="background:var(--primary); color:white; border:none; padding:0 15px; border-radius:8px; cursor:pointer; flex-shrink:0;">儲存</button>
+        </div>
     </div>
+    <div class="settings-item">
+        <div class="toggle-row"><span>背景音樂 BGM</span><button id="bgm-toggle" onclick="toggleBGM()">OFF</button></div>
+    </div>
+    <div class="settings-item">
+        <div class="toggle-row"><span>操作音效 SFX</span><button id="sfx-toggle" onclick="toggleSFX()">ON</button></div>
+    </div>
+    <button onclick="resetGame()" style="width:100%; color:var(--danger); background:none; border:none; text-decoration:underline;">重設所有遊戲數據</button>
+</div>
+
+<div id="rank" class="page">
+    <h3>🏆 世界排行榜</h3>
+    <div id="rank-list" class="rank-list"></div>
 </div>
 
 <div id="levels" class="page"><div class="level-grid" id="level-grid"></div></div>
-<div id="rank" class="page"><h3>🏆 世界排行</h3><div id="rank-list" class="rank-list"></div></div>
-<div id="shop" class="page"><h3>商店</h3><button onclick="buyItem('timeBoost', 100)" class="card">⌛ 購買時光沙漏 (100)</button></div>
+<div id="shop" class="page"><h3>商店</h3><button onclick="buyItem('timeBoost', 100)">⌛ 購買時光沙漏 (100)</button></div>
 <div id="game" class="page">
     <h3 id="game-title"></h3>
     <div id="slot-container" class="slot-row"></div>
-    <div id="deck" style="min-height:150px; border:2px dashed #ddd; border-radius:15px; padding:10px; text-align:center;"></div>
-    <button onclick="useTimeBoost()" class="card" style="width:100%; margin-top:15px; background:rgba(231, 76, 60, 0.1);">⌛ 補時道具 x<span id="count-time">0</span></button>
+    <div id="deck" style="min-height:150px; background:rgba(255,255,255,0.4); border-radius:15px; padding:10px; border:2px dashed #ddd; text-align:center;"></div>
+    <button onclick="useTimeBoost()" class="card" style="width:100%; margin-top:15px; background:#fff5f5;">⌛ 補時道具 x<span id="count-time">0</span></button>
 </div>
 
 <script>
-// --- 核心邏輯 ---
+// --- 資料數據 ---
+const wordLevels = {
+    env: { title: "🌿 環境科學", req: 0, words: [{w:'Sustainable', c:'p'}, {w:'Pollution', c:'n'}, {w:'Biodiversity', c:'p'}, {w:'Deforestation', c:'n'}], slots: [{id:'p', n:'正面'}, {id:'n', n:'負面'}] },
+    tech: { title: "💻 數位科技", req: 300, words: [{w:'Innovation', c:'p'}, {w:'Algorithm', c:'t'}, {w:'Cybersecurity', c:'t'}, {w:'Obsolete', c:'n'}], slots: [{id:'t', n:'技術'}, {id:'p', n:'進步'}, {id:'n', n:'落後'}] },
+    med: { title: "⚕️ 醫療健康", req: 1000, words: [{w:'Antibiotics', c:'m'}, {w:'Resilience', c:'p'}, {w:'Infectious', c:'n'}, {w:'Therapeutic', c:'m'}], slots: [{id:'m', n:'醫療'}, {id:'p', n:'康復'}, {id:'n', n:'病毒'}] },
+    law: { title: "⚖️ 法律社會", req: 2000, words: [{w:'Justice', c:'p'}, {w:'Legislation', c:'l'}, {w:'Corruption', c:'n'}, {w:'Verdict', c:'l'}], slots: [{id:'l', n:'法規'}, {id:'p', n:'正義'}, {id:'n', n:'犯罪'}] },
+    art: { title: "🎨 藝術文化", req: 3500, words: [{w:'Masterpiece', c:'p'}, {w:'Aesthetic', c:'a'}, {w:'Abstract', c:'a'}, {w:'Plagiarism', c:'n'}], slots: [{id:'a', n:'創作'}, {id:'p', n:'佳作'}, {id:'n', n:'抄襲'}] },
+    biz: { title: "💰 商業貿易", req: 5000, words: [{w:'Monopoly', c:'n'}, {w:'Investment', c:'b'}, {w:'Profitable', c:'p'}, {w:'Bankruptcy', c:'n'}], slots: [{id:'b', n:'策略'}, {id:'p', n:'獲利'}, {id:'n', n:'風險'}] }
+};
+
+const quotes = [{en: "The limits of my language mean the limits of my world.", zh: "語言的限制，就是我世界的限制。"}];
+
+// --- 狀態變數 ---
 let nickname = localStorage.getItem('ws_name') || "冒險者";
 let score = parseInt(localStorage.getItem('ws_score')) || 0;
 let coins = parseInt(localStorage.getItem('ws_coins')) || 500;
+let starsData = JSON.parse(localStorage.getItem('ws_stars')) || {};
 let items = JSON.parse(localStorage.getItem('ws_items')) || { timeBoost: 2 };
 let sfxEnabled = localStorage.getItem('ws_sfx') !== 'false';
-let currentTheme = localStorage.getItem('ws_theme') || 'white';
-let timeLeft = 30, timerId = null, currentKey = '', isPlaying = false;
+let timeLeft = 30, timerId = null, currentKey = '', isPlaying = false, selectedId = null;
 
-function changeTheme(theme) {
-    document.body.className = 'theme-' + theme;
-    localStorage.setItem('ws_theme', theme);
-    currentTheme = theme;
-}
-
+// --- 核心邏輯 ---
 function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
     if(document.getElementById('btn-'+id)) document.getElementById('btn-'+id).classList.add('active');
+    
     if(id === 'rank') renderRank();
     if(id === 'levels') renderLevels();
     updateUI();
@@ -162,16 +141,24 @@ function updateUI() {
     document.getElementById('home-score').innerText = score;
     document.getElementById('coin-display').innerText = coins;
     document.getElementById('count-time').innerText = items.timeBoost;
+    localStorage.setItem('ws_score', score);
+    localStorage.setItem('ws_coins', coins);
 }
 
 function saveNickname() {
-    const val = document.getElementById('name-input').value;
-    if(val) { nickname = val; localStorage.setItem('ws_name', val); updateUI(); alert("暱稱已儲存！"); }
+    const input = document.getElementById('name-input').value.trim();
+    if(input) {
+        nickname = input;
+        localStorage.setItem('ws_name', nickname);
+        alert("暱稱已更新為：" + nickname);
+        updateUI();
+    }
 }
 
 function renderRank() {
     const list = document.getElementById('rank-list');
-    const all = [{n:"GSAT_Pro", s:6000}, {n: nickname + " (你)", s:score}].sort((a,b)=>b.s - a.s);
+    const fake = [{n:"GSAT_Pro", s:6000}, {n:"Word_God", s:4500}, {n:"English_King", s:2500}];
+    const all = [...fake, {n: nickname + " (你)", s:score}].sort((a,b)=>b.s - a.s);
     list.innerHTML = '';
     all.forEach((r, i) => {
         list.innerHTML += `<div class="rank-item ${r.n.includes('(你)')?'me':''}"><span>#${i+1} ${r.n}</span><b>${r.s}</b></div>`;
@@ -180,62 +167,64 @@ function renderRank() {
 
 function renderLevels() {
     const grid = document.getElementById('level-grid'); grid.innerHTML = '';
-    const lvls = {
-        env: { t: "🌿 環境", r: 0 }, tech: { t: "💻 科技", r: 300 }, 
-        med: { t: "⚕️ 醫療", r: 1000 }, law: { t: "⚖️ 法律", r: 2000 },
-        art: { t: "🎨 藝術", r: 3500 }, biz: { t: "💰 商業", r: 5000 }
-    };
-    Object.keys(lvls).forEach(k => {
-        const locked = score < lvls[k].r;
+    Object.keys(wordLevels).forEach(key => {
+        const lvl = wordLevels[key]; const locked = score < lvl.req;
         const div = document.createElement('div'); div.className = `level-card ${locked ? 'locked' : ''}`;
-        div.innerHTML = `<b>${lvls[k].t}</b><small>${locked ? '🔒 '+lvls[k].r : '已開啟'}</small>${locked ? '<div class="chain-overlay">⛓️</div>' : ''}`;
-        if(!locked) div.onclick = () => startLevel(k);
+        div.innerHTML = `<b>${lvl.title}</b><small>${locked ? '🔒 '+lvl.req+' 分解鎖' : '已開啟'}</small>${locked ? '<div class="chain-overlay">⛓️</div>' : ''}`;
+        if(!locked) div.onclick = () => startLevel(key);
         grid.appendChild(div);
     });
 }
 
-// 遊戲邏輯簡化版 (結構同前，確保功能不遺失)
+// --- 遊戲/音效邏輯 (與前版相同，保持穩定) ---
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playSFX(type) {
+    if(!sfxEnabled) return;
+    const osc = audioCtx.createOscillator(); const g = audioCtx.createGain();
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.frequency.value = type==='correct'?800:type==='wrong'?200:600;
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+}
+
+function toggleSFX() { sfxEnabled = !sfxEnabled; localStorage.setItem('ws_sfx', sfxEnabled); document.getElementById('sfx-toggle').innerText = sfxEnabled?"ON":"OFF"; }
+function toggleBGM() { const m = document.getElementById('bgm'); const b = document.getElementById('bgm-toggle'); if(m.paused){m.play(); b.innerText="ON";}else{m.pause(); b.innerText="OFF";} }
+
 function startLevel(key) {
-    currentKey = key; showPage('game'); 
-    document.getElementById('game-title').innerText = "挑戰中...";
-    document.getElementById('slot-container').innerHTML = '<div class="slot" id="p" onclick="matchWord(\'p\')">分類 A</div><div class="slot" id="n" onclick="matchWord(\'n\')">分類 B</div>';
-    document.getElementById('deck').innerHTML = '<div class="card" onclick="selectCard(this, \'p\')">測試單字</div>';
+    currentKey = key; showPage('game'); document.getElementById('game-title').innerText = wordLevels[key].title;
+    const sCon = document.getElementById('slot-container'); sCon.innerHTML = '';
+    wordLevels[key].slots.forEach(s => sCon.innerHTML += `<div class="slot" id="${s.id}" ondrop="drop(event)" ondragover="event.preventDefault()" onclick="slotClick('${s.id}')">${s.n}</div>`);
+    const deck = document.getElementById('deck'); deck.innerHTML = '';
+    wordLevels[key].words.forEach(w => {
+        const c = document.createElement('div'); c.className = 'card'; c.draggable = true; c.id = w.w; c.innerText = w.w;
+        c.ondragstart = (e) => { e.dataTransfer.setData("text", e.target.id); startTimer(); };
+        c.onclick = () => { playSFX('click'); selectCard(w.w); startTimer(); };
+        deck.appendChild(c);
+    });
     resetTimer();
 }
 
-function selectCard(el, cat) { 
-    document.querySelectorAll('.card').forEach(c => c.style.borderColor = "#eee");
-    el.style.borderColor = "var(--primary)"; 
-    window.selectedCat = cat; window.selectedEl = el;
-    startTimer();
+function selectCard(id) { selectedId = id; document.querySelectorAll('.card').forEach(c => c.classList.remove('selected')); document.getElementById(id).classList.add('selected'); }
+function slotClick(id) { if(selectedId) { matchWord(selectedId, id); selectedId = null; } }
+function drop(e) { e.preventDefault(); matchWord(e.dataTransfer.getData("text"), e.currentTarget.id); }
+
+function matchWord(wordId, slotId) {
+    const word = wordLevels[currentKey].words.find(w => w.w === wordId);
+    if(word && word.c === slotId) { document.getElementById(wordId).remove(); score += 80; coins += 20; playSFX('correct'); updateUI(); if(document.getElementById('deck').children.length === 0) winLevel(); }
+    else { timeLeft = Math.max(0, timeLeft - 5); playSFX('wrong'); }
 }
 
-function matchWord(cat) {
-    if(window.selectedCat === cat) {
-        window.selectedEl.remove(); score += 50; updateUI();
-        if(document.getElementById('deck').children.length === 0) { clearInterval(timerId); alert("成功！"); showPage('levels'); }
-    } else { timeLeft -= 5; }
-}
-
-function startTimer() {
-    if(isPlaying) return; isPlaying = true;
-    timerId = setInterval(() => {
-        timeLeft--; 
-        document.getElementById('timer-text').innerText = "⏱️ "+timeLeft+"s";
-        document.getElementById('timer-bar').style.width = (timeLeft/30*100)+"%";
-        if(timeLeft <= 0) { clearInterval(timerId); alert("時間到！"); showPage('levels'); }
-    }, 1000);
-}
-
+function winLevel() { clearInterval(timerId); alert("⛓️ 鐵鍊斷裂！"); showPage('levels'); }
+function startTimer() { if(isPlaying) return; isPlaying = true; timerId = setInterval(() => { timeLeft--; document.getElementById('timer-text').innerText = "⏱️ "+timeLeft+"s"; document.getElementById('timer-bar').style.width = (timeLeft/30*100)+"%"; if(timeLeft<=0){ clearInterval(timerId); alert("時間到！"); exitGame(); } }, 1000); }
 function resetTimer() { clearInterval(timerId); timeLeft = 30; isPlaying = false; document.getElementById('timer-bar').style.width = "100%"; }
-function toggleSFX() { sfxEnabled = !sfxEnabled; localStorage.setItem('ws_sfx', sfxEnabled); document.getElementById('sfx-toggle').innerText = sfxEnabled?"ON":"OFF"; }
-function buyItem(k, p) { if(coins >= p) { coins -= p; items[k]++; updateUI(); } }
+function exitGame() { resetTimer(); showPage('levels'); }
+function resetGame() { if(confirm("確定刪除？")) { localStorage.clear(); location.reload(); } }
+function buyItem(k, p) { if(coins >= p) { coins -= p; items[k]++; updateUI(); playSFX('correct'); } }
 function useTimeBoost() { if(items.timeBoost > 0 && isPlaying) { items.timeBoost--; timeLeft += 10; updateUI(); } }
 
 window.onload = () => {
-    changeTheme(currentTheme);
     document.getElementById('name-input').value = nickname;
-    document.getElementById('quote-display').innerHTML = `“The expert in anything was once a beginner.”<br><small>— 任何領域的專家都曾是個初學者。</small>`;
+    document.getElementById('quote-display').innerHTML = `“${quotes[0].en}”<br><small>— ${quotes[0].zh}</small>`;
     showPage('home');
 };
 </script>
