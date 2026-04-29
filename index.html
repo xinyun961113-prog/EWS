@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordStack: Layout Shield</title>
+    <title>WordStack: Bilingual Wisdom</title>
     <style>
         :root { 
             --primary: #4a90e2; --bg: #f4f7f6; --accent: #f1c40f; 
@@ -18,7 +18,6 @@
 
         body { font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif; background: var(--bg); margin: 0; color: var(--text); transition: 0.3s; overflow-x: hidden; user-select: none; }
         
-        /* 固定頭部避免跑版 */
         .header-fixed { position: sticky; top: 0; z-index: 1001; background: var(--bg); width: 100%; }
         .status-bar { background: #2d3748; color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; height: 25px; }
         .timer-container { width: 100%; background: #ddd; height: 4px; }
@@ -28,41 +27,27 @@
         nav button { border: 1.2px solid var(--primary); background: transparent; color: var(--primary); padding: 8px 2px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 10px; flex: 1; min-width: 0; }
         nav button.active { background: var(--primary); color: white; }
 
-        .page { display: none; padding: 15px; max-width: 100%; box-sizing: border-box; margin: auto; animation: fadeIn 0.3s; }
+        .page { display: none; padding: 15px; max-width: 600px; box-sizing: border-box; margin: auto; animation: fadeIn 0.3s; }
         .page.active { display: block; }
 
-        /* 遊戲區域：防止跑版核心 CSS */
+        /* 佳句區塊修正 */
+        .quote-box { margin: 20px 0; padding: 20px; border-left: 5px solid var(--primary); background: rgba(74,144,226,0.1); text-align: left; }
+        .quote-en { font-style: italic; font-weight: bold; margin-bottom: 8px; font-size: 16px; }
+        .quote-zh { font-size: 14px; opacity: 0.8; }
+
+        /* 遊戲區域：防跑版 CSS */
         .slot-container { display: flex; gap: 8px; margin: 15px 0; width: 100%; }
-        .drop-zone { 
-            flex: 1; border: 2px dashed var(--primary); border-radius: 12px; min-height: 90px; 
-            display: flex; align-items: center; justify-content: center; background: rgba(74, 144, 226, 0.05); 
-            text-align: center; padding: 5px; font-weight: bold; font-size: 12px; word-break: break-all;
-        }
+        .drop-zone { flex: 1; border: 2px dashed var(--primary); border-radius: 12px; min-height: 90px; display: flex; align-items: center; justify-content: center; background: rgba(74, 144, 226, 0.05); text-align: center; padding: 5px; font-weight: bold; font-size: 12px; word-break: break-all; }
         .drop-zone.over { background: rgba(74, 144, 226, 0.2); border-style: solid; transform: scale(1.02); }
 
-        .deck { 
-            min-height: 180px; max-height: 350px; overflow-y: auto; /* 加入內部捲軸防止撐爆 */
-            background: rgba(0,0,0,0.03); border-radius: 15px; padding: 15px; border: 2px solid #ddd; 
-            margin-top: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; align-content: flex-start;
-        }
-
-        /* 單字卡防跑版設定 */
-        .draggable-card { 
-            padding: 10px 14px; background: var(--card-bg); color: var(--text); border-radius: 8px; 
-            cursor: grab; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.1); font-size: 13px; 
-            border: 1px solid rgba(0,0,0,0.1); 
-            flex-shrink: 0; /* 關鍵：禁止被擠壓縮小 */
-            max-width: calc(100vw - 60px); /* 關鍵：不超過螢幕寬度 */
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; /* 單行並處理長單字 */
-        }
+        .deck { min-height: 180px; max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.03); border-radius: 15px; padding: 15px; border: 2px solid #ddd; margin-top: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; align-content: flex-start; }
+        .draggable-card { padding: 10px 14px; background: var(--card-bg); color: var(--text); border-radius: 8px; cursor: grab; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.1); font-size: 13px; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; max-width: calc(100vw - 60px); white-space: nowrap; }
         .dragging { opacity: 0.3; }
 
-        /* 列表與卡片 */
         .level-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
         .level-card { background: var(--card-bg); padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; height: 85px; display: flex; flex-direction: column; justify-content: center; border: 1px solid rgba(0,0,0,0.05); }
         .level-card.locked { opacity: 0.6; filter: grayscale(1); cursor: not-allowed; }
-        .lock-info { font-size: 10px; color: var(--danger); font-weight: bold; }
-
+        
         .list-item { background: var(--card-bg); padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(0,0,0,0.05); }
         .btn-buy { background: var(--accent); border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn-buy.owned { background: #cbd5e0; cursor: not-allowed; color: #718096; }
@@ -89,10 +74,13 @@
 </div>
 
 <div id="home" class="page active">
-    <div style="text-align:center; padding:40px 20px; background:var(--card-bg); border-radius:20px;">
+    <div style="text-align:center; padding:20px; background:var(--card-bg); border-radius:20px;">
         <h2>你好，<span id="welcome-name">冒險者</span></h2>
-        <p>優化了排版穩定性。現在單字再多也不會亂跑！</p>
-        <button onclick="showPage('levels')" style="background:var(--primary); color:white; border:none; padding:15px 50px; border-radius:30px; font-weight:bold; cursor:pointer;">開始闖關</button>
+        <div class="quote-box" id="quote-display">
+            <div class="quote-en" id="q-en">Loading...</div>
+            <div class="quote-zh" id="q-zh">載入中...</div>
+        </div>
+        <button onclick="showPage('levels')" style="background:var(--primary); color:white; border:none; padding:15px 50px; border-radius:30px; font-weight:bold; cursor:pointer; width:100%;">開始闖關</button>
     </div>
 </div>
 
@@ -111,7 +99,7 @@
 
 <div id="result" class="page">
     <div style="background:var(--card-bg); padding:25px; border-radius:20px; text-align:center;">
-        <h2 style="color:var(--success); margin:0;">✨ 通關成功</h2>
+        <h2 style="color:var(--success); margin:0;">✨ 挑戰完成</h2>
         <p id="oracle-msg" style="color:var(--primary); font-weight:bold; margin:10px 0;"></p>
         <div id="review-list" style="text-align:left; max-height: 250px; overflow-y: auto; background:rgba(0,0,0,0.03); border-radius:10px; margin-bottom:20px; padding: 8px;"></div>
         <button onclick="showPage('levels')" style="width:100%; padding:15px; border-radius:25px; background:var(--primary); color:white; border:none; font-weight:bold;">返回地圖</button>
@@ -121,11 +109,11 @@
 <div id="shop" class="page">
     <h3>🛒 商店</h3>
     <div class="list-item">
-        <div><b>🕒 增加挑戰時間</b><br><small>加時效果</small></div>
+        <div><b>🕒 時間補給 (+5s)</b><br><small>購買後下場遊戲有效</small></div>
         <button onclick="buyTimeItem(500)" class="btn-buy">💰 500</button>
     </div>
     <div class="list-item">
-        <div><b>🌸 浪漫粉主題</b><br><small>限購一次</small></div>
+        <div><b>🌸 浪漫粉主題</b><br><small>限購一次，購買後於設置中更換</small></div>
         <button id="shop-pink-btn" onclick="buyThemeItem('pink', 2000)" class="btn-buy">💰 2000</button>
     </div>
 </div>
@@ -140,7 +128,7 @@
         </div>
     </div>
     <div class="list-item" style="flex-direction: column; align-items: flex-start; gap: 10px;">
-        <b>解鎖的主題管理</b>
+        <b>背景管理 (點選切換)</b>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; width:100%;" id="theme-manager"></div>
     </div>
 </div>
@@ -149,21 +137,78 @@
 <div id="rank" class="page"><h3>🏆 排行</h3><div id="rank-list"></div></div>
 
 <script>
-// 單字庫重裝 (10 關，每關 10-12 單字)
+// --- 中英雙語佳句庫 ---
+const quotes = [
+    {en: "The limit of your language is the limit of your world.", zh: "語言的邊界，就是你世界的邊界。"},
+    {en: "Learning is a treasure that will follow its owner everywhere.", zh: "學習是一份寶藏，會跟隨它的主人到任何地方。"},
+    {en: "A different language is a different vision of life.", zh: "每一種不同的語言，都是一種不同的人生觀。"},
+    {en: "Knowledge is power.", zh: "知識就是力量。"},
+    {en: "Action is the foundational key to all success.", zh: "行動是通往所有成功的基石。"},
+    {en: "Believe you can and you're halfway there.", zh: "相信你自己可以做到，你就已經成功了一半。"}
+];
+
+// --- 擴充單字庫：10 大關卡，每關 10-12 單字 ---
 const wordLevels = {
     env: { title: "🌿 環境科學", req: 0, slots: [{id:'p', n:'保育'}, {id:'n', n:'破壞'}],
-        words: [{w:'Sustainable', z:'永續', c:'p'}, {w:'Pollution', z:'污染', c:'n'}, {w:'Biodiversity', z:'生物多樣性', c:'p'}, {w:'Erosion', z:'侵蝕', c:'n'}, {w:'Renewable', z:'再生', c:'p'}, {w:'Emission', z:'排放', c:'n'}, {w:'Conservation', z:'保育', c:'p'}, {w:'Toxin', z:'毒素', c:'n'}, {w:'Ecofriendly', z:'環保', c:'p'}, {w:'Deforestation', z:'森林砍伐', c:'n'}]},
+        words: [
+            {w:'Sustainable', z:'永續的', c:'p'}, {w:'Pollution', z:'污染', c:'n'}, {w:'Biodiversity', z:'生物多樣性', c:'p'}, {w:'Erosion', z:'侵蝕', c:'n'},
+            {w:'Renewable', z:'可再生的', c:'p'}, {w:'Emission', z:'排放', c:'n'}, {w:'Conservation', z:'保育', c:'p'}, {w:'Toxin', z:'毒素', c:'n'},
+            {w:'Ecofriendly', z:'環保的', c:'p'}, {w:'Deforestation', z:'森林砍伐', c:'n'}, {w:'Geothermal', z:'地熱的', c:'p'}, {w:'Overfishing', z:'過度捕撈', c:'n'}
+        ]},
     tech: { title: "💻 數位科技", req: 500, slots: [{id:'b', n:'技術'}, {id:'n', n:'風險'}],
-        words: [{w:'Algorithm', z:'演算法', c:'b'}, {w:'Malware', z:'惡意軟體', c:'n'}, {w:'Encryption', z:'加密', c:'b'}, {w:'Phishing', z:'釣魚', c:'n'}, {w:'Infrastructure', z:'基礎設施', c:'b'}, {w:'Vulnerability', z:'漏洞', c:'n'}, {w:'Automation', z:'自動化', c:'b'}, {w:'Ransomware', z:'勒索病毒', c:'n'}, {w:'Optimization', z:'優化', c:'b'}, {w:'Botnet', z:'殭屍網路', c:'n'}]},
+        words: [
+            {w:'Algorithm', z:'演算法', c:'b'}, {w:'Malware', z:'惡意軟體', c:'n'}, {w:'Encryption', z:'加密', c:'b'}, {w:'Phishing', z:'網路釣魚', c:'n'},
+            {w:'Vulnerability', z:'漏洞', c:'n'}, {w:'Blockchain', z:'區塊鏈', c:'b'}, {w:'Ransomware', z:'勒索病毒', c:'n'}, {w:'Automation', z:'自動化', c:'b'},
+            {w:'Bandwidth', z:'頻寬', c:'b'}, {w:'Botnet', z:'殭屍網路', c:'n'}, {w:'Optimization', z:'優化', c:'b'}, {w:'Hacking', z:'駭客攻擊', c:'n'}
+        ]},
     med: { title: "⚕️ 醫療健康", req: 1500, slots: [{id:'a', n:'預防'}, {id:'n', n:'病理'}],
-        words: [{w:'Antibiotics', z:'抗生素', c:'a'}, {w:'Pathogen', z:'病原體', c:'n'}, {w:'Vaccination', z:'疫苗', c:'a'}, {w:'Infection', z:'感染', c:'n'}, {w:'Immunity', z:'免疫力', c:'a'}, {w:'Chronic', z:'慢性', c:'n'}, {w:'Diagnosis', z:'診斷', c:'a'}, {w:'Tumor', z:'腫瘤', c:'n'}, {w:'Prevention', z:'預防', c:'a'}, {w:'Mutation', z:'突變', c:'n'}]},
-    biz: { title: "💰 商業金融", req: 3000, slots: [{id:'p', n:'資產'}, {id:'n', n:'風險'}], words: [{w:'Investment', z:'投資', c:'p'}, {w:'Bankruptcy', z:'破產', c:'n'}, {w:'Revenue', z:'營收', c:'p'}, {w:'Deficit', z:'赤字', c:'n'}, {w:'Dividend', z:'紅利', c:'p'}, {w:'Recession', z:'衰退', c:'n'}, {w:'Portfolio', z:'組合', c:'p'}, {w:'Liquidation', z:'清算', c:'n'}, {w:'Profitable', z:'獲利', c:'p'}, {w:'Inflation', z:'通膨', c:'n'}]},
-    art: { title: "🎨 藝術文化", req: 5000, slots: [{id:'a', n:'表現'}, {id:'n', n:'爭議'}], words: [{w:'Aesthetic', z:'美學', c:'a'}, {w:'Plagiarism', z:'抄襲', c:'n'}, {w:'Masterpiece', z:'傑作', c:'a'}, {w:'Censorship', z:'審查', c:'n'}, {w:'Exhibition', z:'展覽', c:'a'}, {w:'Forgery', z:'偽造', c:'n'}, {w:'Expression', z:'表達', c:'a'}, {w:'Distortion', z:'扭曲', c:'n'}, {w:'Heritage', z:'遺產', c:'a'}, {w:'Vandalism', z:'破壞', c:'n'}]},
-    law: { title: "⚖️ 法律社會", req: 8000, slots: [{id:'p', n:'正義'}, {id:'n', n:'違規'}], words: [{w:'Justice', z:'正義', c:'p'}, {w:'Violation', z:'違反', c:'n'}, {w:'Legislation', z:'立法', c:'p'}, {w:'Felony', z:'重罪', c:'n'}, {w:'Integrity', z:'廉正', c:'p'}, {w:'Corruption', z:'貪污', c:'n'}, {w:'Compliance', z:'合規', c:'p'}, {w:'Fraud', z:'詐欺', c:'n'}, {w:'Constitution', z:'憲法', c:'p'}, {w:'Perjury', z:'偽證', c:'n'}]},
-    psy: { title: "🧠 心理認知", req: 12000, slots: [{id:'p', n:'正向'}, {id:'n', n:'負面'}], words: [{w:'Empathy', z:'同理', c:'p'}, {w:'Trauma', z:'創傷', c:'n'}, {w:'Resilience', z:'韌性', c:'p'}, {w:'Phobia', z:'恐懼症', c:'n'}, {w:'Cognition', z:'認知', c:'p'}, {w:'Anxiety', z:'焦慮', c:'n'}, {w:'Mindfulness', z:'正念', c:'p'}, {w:'Depression', z:'憂鬱', c:'n'}, {w:'Compassion', z:'憐憫', c:'p'}, {w:'Neurosis', z:'神經官能', c:'n'}]},
-    ast: { title: "🚀 宇宙天文", req: 18000, slots: [{id:'s', n:'星體'}, {id:'d', n:'威脅'}], words: [{w:'Galaxy', z:'星系', c:'s'}, {w:'Asteroid', z:'小行星', c:'d'}, {w:'Nebula', z:'星雲', c:'s'}, {w:'Radiation', z:'輻射', c:'d'}, {w:'Constellation', z:'星座', c:'s'}, {w:'Blackhole', z:'黑洞', c:'d'}, {w:'Meteor', z:'流星', c:'s'}, {w:'Vacuum', z:'真空', c:'d'}, {w:'Supernova', z:'超新星', c:'s'}, {w:'Impact', z:'撞擊', c:'d'}]},
-    arc: { title: "🏛️ 建築設計", req: 25000, slots: [{id:'s', n:'結構'}, {id:'n', n:'毀損'}], words: [{w:'Blueprint', z:'藍圖', c:'s'}, {w:'Demolition', z:'拆除', c:'n'}, {w:'Foundation', z:'地基', c:'s'}, {w:'Collapse', z:'坍塌', c:'n'}, {w:'Facade', z:'正面', c:'s'}, {w:'Deterioration', z:'退化', c:'n'}, {w:'Beams', z:'支撐樑', c:'s'}, {w:'Ruin', z:'廢墟', c:'n'}, {w:'Reinforcement', z:'補強', c:'s'}, {w:'Corrosion', z:'鏽蝕', c:'n'}]},
-    phi: { title: "📜 哲學思想", req: 35000, slots: [{id:'v', n:'美德'}, {id:'n', n:'挑戰'}], words: [{w:'Virtue', z:'美德', c:'v'}, {w:'Nihilism', z:'虛無', c:'n'}, {w:'Logic', z:'邏輯', c:'v'}, {w:'Paradox', z:'悖論', c:'n'}, {w:'Ethics', z:'倫理', c:'v'}, {w:'Skepticism', z:'懷疑論', c:'n'}, {w:'Wisdom', z:'智慧', c:'v'}, {w:'Absurdity', z:'荒謬', c:'n'}, {w:'Idealism', z:'唯心', c:'v'}, {w:'Sophistry', z:'詭辯', c:'n'}]}
+        words: [
+            {w:'Antibiotics', z:'抗生素', c:'a'}, {w:'Pathogen', z:'病原體', c:'n'}, {w:'Vaccination', z:'疫苗', c:'a'}, {w:'Infection', z:'感染', c:'n'},
+            {w:'Immunity', z:'免疫力', c:'a'}, {w:'Diagnosis', z:'診斷', c:'a'}, {w:'Chronic', z:'慢性的', c:'n'}, {w:'Therapy', z:'療法', c:'a'},
+            {w:'Mutation', z:'突變', c:'n'}, {w:'Epidemic', z:'流行病', c:'n'}, {w:'Supplement', z:'補充品', c:'a'}, {w:'Complication', z:'併發症', c:'n'}
+        ]},
+    biz: { title: "💰 商業金融", req: 3000, slots: [{id:'p', n:'資產'}, {id:'n', n:'風險'}],
+        words: [
+            {w:'Investment', z:'投資', c:'p'}, {w:'Bankruptcy', z:'破產', c:'n'}, {w:'Revenue', z:'營收', c:'p'}, {w:'Deficit', z:'赤字', c:'n'},
+            {w:'Dividend', z:'紅利', c:'p'}, {w:'Recession', z:'經濟衰退', c:'n'}, {w:'Acquisition', z:'收購', c:'p'}, {w:'Inflation', z:'通貨膨脹', c:'n'},
+            {w:'Portfolio', z:'投資組合', c:'p'}, {w:'Liquidation', z:'清算', c:'n'}, {w:'Equity', z:'股權', c:'p'}, {w:'Monopoly', z:'壟斷', c:'n'}
+        ]},
+    art: { title: "🎨 藝術文化", req: 5000, slots: [{id:'a', n:'表現'}, {id:'n', n:'挑戰'}],
+        words: [
+            {w:'Aesthetic', z:'美學的', c:'a'}, {w:'Plagiarism', z:'抄襲', c:'n'}, {w:'Masterpiece', z:'傑作', c:'a'}, {w:'Censorship', z:'審查制度', c:'n'},
+            {w:'Exhibition', z:'展覽', c:'a'}, {w:'Forgery', z:'偽造', c:'n'}, {w:'Perspective', z:'透視/觀點', c:'a'}, {w:'Distortion', z:'扭曲', c:'n'},
+            {w:'Avant-garde', z:'前衛', c:'a'}, {w:'Vandalism', z:'惡意破壞', c:'n'}, {w:'Curator', z:'策展人', c:'a'}, {w:'Obsolete', z:'過時的', c:'n'}
+        ]},
+    law: { title: "⚖️ 法律社會", req: 8000, slots: [{id:'p', n:'正義'}, {id:'n', n:'違規'}],
+        words: [
+            {w:'Justice', z:'正義', c:'p'}, {w:'Violation', z:'違反', c:'n'}, {w:'Legislation', z:'立法', c:'p'}, {w:'Felony', z:'重罪', c:'n'},
+            {w:'Compliance', z:'合規', c:'p'}, {w:'Corruption', z:'貪污', c:'n'}, {w:'Integrity', z:'廉正', c:'p'}, {w:'Defendant', z:'被告', c:'n'},
+            {w:'Advocacy', z:'倡導', c:'p'}, {w:'Fraud', z:'詐欺', c:'n'}, {w:'Solicitor', z:'律師', c:'p'}, {w:'Perjury', z:'偽證', c:'n'}
+        ]},
+    psy: { title: "🧠 心理認知", req: 12000, slots: [{id:'p', n:'正向'}, {id:'n', n:'負面'}],
+        words: [
+            {w:'Empathy', z:'同理心', c:'p'}, {w:'Trauma', z:'創傷', c:'n'}, {w:'Resilience', z:'韌性', c:'p'}, {w:'Phobia', z:'恐懼症', c:'n'},
+            {w:'Cognition', z:'認知', c:'p'}, {w:'Anxiety', z:'焦慮', c:'n'}, {w:'Mindfulness', z:'正念', c:'p'}, {w:'Depression', z:'憂鬱', c:'n'},
+            {w:'Compassion', z:'憐憫', c:'p'}, {w:'Narcissism', z:'自戀', c:'n'}, {w:'Optimism', z:'樂觀', c:'p'}, {w:'Psychosis', z:'精神病', c:'n'}
+        ]},
+    ast: { title: "🚀 宇宙天文", req: 18000, slots: [{id:'s', n:'星體'}, {id:'d', n:'威脅'}],
+        words: [
+            {w:'Galaxy', z:'星系', c:'s'}, {w:'Asteroid', z:'小行星', c:'d'}, {w:'Nebula', z:'星雲', c:'s'}, {w:'Radiation', z:'輻射', c:'d'},
+            {w:'Constellation', z:'星座', c:'s'}, {w:'Blackhole', z:'黑洞', c:'d'}, {w:'Orbit', z:'軌道', c:'s'}, {w:'Vacuum', z:'真空', c:'d'},
+            {w:'Supernova', z:'超新星', c:'s'}, {w:'Meteorite', z:'隕石', c:'d'}, {w:'Satellite', z:'衛星', c:'s'}, {w:'Collision', z:'碰撞', c:'d'}
+        ]},
+    arc: { title: "🏛️ 建築設計", req: 25000, slots: [{id:'s', n:'結構'}, {id:'n', n:'損毀'}],
+        words: [
+            {w:'Blueprint', z:'藍圖', c:'s'}, {w:'Demolition', z:'拆除', c:'n'}, {w:'Foundation', z:'地基', c:'s'}, {w:'Collapse', z:'坍塌', c:'n'},
+            {w:'Facade', z:'建築正面', c:'s'}, {w:'Deterioration', z:'惡化', c:'n'}, {w:'Skyscraper', z:'摩天大樓', c:'s'}, {w:'Ruin', z:'廢墟', c:'n'},
+            {w:'Reinforcement', z:'補強', c:'s'}, {w:'Dilapidated', z:'荒廢的', c:'n'}, {w:'Beams', z:'支撐樑', c:'s'}, {w:'Corrosion', z:'鏽蝕', c:'n'}
+        ]},
+    phi: { title: "📜 哲學思想", req: 35000, slots: [{id:'v', n:'美德'}, {id:'n', n:'挑戰'}],
+        words: [
+            {w:'Virtue', z:'美德', c:'v'}, {w:'Nihilism', z:'虛無主義', c:'n'}, {w:'Logic', z:'邏輯', c:'v'}, {w:'Paradox', z:'悖論', c:'n'},
+            {w:'Ethics', z:'倫理', c:'v'}, {w:'Absurdity', z:'荒謬', c:'n'}, {w:'Wisdom', z:'智慧', c:'v'}, {w:'Skepticism', z:'懷疑論', c:'n'},
+            {w:'Idealism', z:'唯心主義', c:'v'}, {w:'Sophistry', z:'詭辯', c:'n'}, {w:'Altruism', z:'利他主義', c:'v'}, {w:'Fallacy', z:'謬誤', c:'n'}
+        ]}
 };
 
 let score = parseInt(localStorage.getItem('ws_score')) || 0;
@@ -177,11 +222,18 @@ let currentKey = '', timeLeft = 30, timerId = null;
 function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    if(id === 'home') refreshQuote();
     if(id === 'levels') renderLevels();
     if(id === 'rank') renderRank();
     if(id === 'collection') renderCollection();
     if(id === 'settings') renderThemeManager();
     updateUI();
+}
+
+function refreshQuote() {
+    const q = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById('q-en').innerText = q.en;
+    document.getElementById('q-zh').innerText = q.zh;
 }
 
 function updateUI() {
@@ -192,7 +244,7 @@ function updateUI() {
     document.body.className = 'theme-' + theme;
     
     if(unlockedThemes.includes('pink')) {
-        const b = document.getElementById('shop-pink-btn'); b.innerText = '已解鎖'; b.classList.add('owned'); b.onclick = null;
+        const b = document.getElementById('shop-pink-btn'); b.innerText = '已解鎖主題'; b.classList.add('owned'); b.onclick = null;
     }
 
     localStorage.setItem('ws_score', score);
@@ -210,7 +262,7 @@ function renderLevels() {
         const div = document.createElement('div');
         div.className = `level-card ${locked ? 'locked' : ''}`;
         div.innerHTML = `<b>${wordLevels[k].title}</b>`;
-        if(locked) div.innerHTML += `<div class="lock-info">🔒 ${wordLevels[k].req} 積分</div>`;
+        if(locked) div.innerHTML += `<div style="font-size:10px; color:var(--danger);">🔒 ${wordLevels[k].req}</div>`;
         else div.onclick = () => startLevel(k);
         grid.appendChild(div);
     });
@@ -246,9 +298,9 @@ function handleDrop(e, slotId) {
     const wordData = wordLevels[currentKey].words.find(w => w.w === wordText);
     if (wordData && wordData.c === slotId) {
         document.querySelectorAll('.draggable-card').forEach(el => { if(el.innerText === wordText) el.remove(); });
-        score += 120; coins += 60; updateUI();
+        score += 100; coins += 50; updateUI();
         if(document.getElementById('deck').children.length === 0) { clearInterval(timerId); finishLevel(); }
-    } else { timeLeft = Math.max(0, timeLeft - 4); }
+    } else { timeLeft = Math.max(0, timeLeft - 3); }
     document.querySelectorAll('.drop-zone').forEach(d => d.classList.remove('over'));
 }
 
@@ -258,7 +310,7 @@ function finishLevel() {
         const isSaved = collection.some(i => i.w === word.w);
         const div = document.createElement('div'); div.className = 'list-item';
         div.innerHTML = `<div><b>${word.w}</b> <small>${word.z}</small></div>
-            <button onclick="toggleSave('${word.w}','${word.z}',this)" style="border:none; background:none; cursor:pointer; font-size:18px;">${isSaved?'✅':'⭐'}</button>`;
+            <button onclick="toggleSave('${word.w}','${word.z}',this)" style="border:none; background:none; cursor:pointer;">${isSaved?'✅':'⭐'}</button>`;
         list.appendChild(div);
     });
     showPage('result');
@@ -266,8 +318,8 @@ function finishLevel() {
 
 function toggleSave(w, z, btn) {
     const idx = collection.findIndex(i => i.w === w);
-    if(idx > -1) { collection.splice(idx, 1); btn.innerText = '⭐'; }
-    else { collection.push({w, z}); btn.innerText = '✅'; }
+    if(idx > -1) { collection.splice(idx, 1); if(btn) btn.innerText = '⭐'; }
+    else { collection.push({w, z}); if(btn) btn.innerText = '✅'; }
     updateUI();
 }
 
@@ -284,12 +336,12 @@ function renderThemeManager() {
 }
 
 function buyThemeItem(t, cost) {
-    if(coins >= cost) { coins -= cost; unlockedThemes.push(t); theme = t; alert("解鎖成功！"); updateUI();
-    } else { alert("金幣不足"); }
+    if(coins >= cost) { coins -= cost; unlockedThemes.push(t); theme = t; alert("主題解鎖成功！"); updateUI();
+    } else { alert("金幣不足！"); }
 }
 
 function buyTimeItem(cost) {
-    if(coins >= cost) { coins -= cost; alert("已補給！下局生效"); updateUI(); } else { alert("金幣不足"); }
+    if(coins >= cost) { coins -= cost; alert("購買成功，下場遊戲生效！"); updateUI(); } else { alert("金幣不足"); }
 }
 
 function renderCollection() {
